@@ -314,6 +314,40 @@ jobs:
             cxx_standard: 20,
           }
 
+        # MSVC 2022 ARM64
+        - {
+            name: "Windows ARM64 MSVC 2022 Debug (C++17)", artifact: "Windows-ARM64-MSVC.tar.xz",
+            os: windows-11-arm,
+            arch: arm64,
+            build_type: Debug,
+            cc: "cl", cxx: "cl",
+            cxx_standard: 17,
+          }
+        - {
+            name: "Windows ARM64 MSVC 2022 Release (C++17)", artifact: "Windows-ARM64-MSVC.tar.xz",
+            os: windows-11-arm,
+            arch: arm64,
+            build_type: RelWithDebInfo,
+            cc: "cl", cxx: "cl",
+            cxx_standard: 17,
+          }
+        - {
+            name: "Windows ARM64 MSVC 2022 Debug (C++20)", artifact: "Windows-ARM64-MSVC.tar.xz",
+            os: windows-11-arm,
+            arch: arm64,
+            build_type: Debug,
+            cc: "cl", cxx: "cl",
+            cxx_standard: 20,
+          }
+        - {
+            name: "Windows ARM64 MSVC 2022 Release (C++20)", artifact: "Windows-ARM64-MSVC.tar.xz",
+            os: windows-11-arm,
+            arch: arm64,
+            build_type: RelWithDebInfo,
+            cc: "cl", cxx: "cl",
+            cxx_standard: 20,
+          }
+
     steps:
     - uses: actions/checkout@v4
 
@@ -330,9 +364,11 @@ jobs:
       if: runner.os == 'Windows'
       uses: ilammy/msvc-dev-cmd@v1
       with:
-        arch: x64
+        arch: ${{ matrix.config.arch || 'x64' }}
 
+    # CMake 3.16.2 has no Windows ARM64 binaries; use the runner's CMake there
     - name: Setup CMake
+      if: matrix.config.arch != 'arm64'
       uses: jwlawson/actions-setup-cmake@v2
       with:
         cmake-version: '3.16.2'
